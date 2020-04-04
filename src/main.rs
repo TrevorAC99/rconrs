@@ -6,6 +6,8 @@ fn main() {
     let input = std::io::stdin();
     let mut input = input.lock();
 
+    println!("{}", include_str!("greeting.txt"));
+
     print!("Enter the host you wish to connect to or leave blank for localhost: ");
     std::io::stdout().flush().unwrap();
 
