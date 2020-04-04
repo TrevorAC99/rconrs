@@ -79,7 +79,7 @@ impl RconPacket {
 
     /// Gets the data of the packet and creates a String from it.
     pub fn get_data_string(&self) -> String {
-        String::from(String::from_utf8_lossy(&self.data).trim())
+        String::from_utf8_lossy(&self.data).trim().replace("\u{0}", "")
     }
 }
 
@@ -97,9 +97,9 @@ impl RconClient {
     /// returning an Err.
     pub fn connect(host: &str, port: u16, password: &str) -> std::io::Result<RconClient> {
 
-        let stream = TcpStream::connect((host, port)).unwrap();
+        let stream = TcpStream::connect((host, port))?;
     
-        let reader = BufReader::new(stream.try_clone().unwrap());
+        let reader = BufReader::new(stream.try_clone()?);
         let writer = BufWriter::new(stream);
 
         let mut client = RconClient {reader, writer};
@@ -142,9 +142,10 @@ impl RconClient {
             let receive_packet = self.receive_packet()?;
 
             if receive_packet.get_id() == RCON_PID {
-                response.push_str(&receive_packet.get_data_string());
+                response.push_str(&receive_packet.get_data_string().trim());
                 continue;
             } else if receive_packet.get_id() == RCON_FOLLOW_PID {
+                response = String::from(response);
                 break Ok(response)
             } else {
                 break new_io_err("Rcon Exec Response Id Invalid")

@@ -48,9 +48,15 @@ fn main() {
 
     let password = password_buffer.trim();
 
-    print!("Attempting to connect...");
+    print!("Attempting to connect... ");
 
-    let mut client = rcon::RconClient::connect(host, port, password).unwrap();
+    let mut client = match rcon::RconClient::connect(host, port, password) {
+        Err(_) => {
+            println!("Unable to authenticate. Did you enter your password correctly? Shutting down.");
+            return;
+        },
+        Ok(client) => client
+    };
 
     println!("Authentication successful");
 
@@ -66,8 +72,17 @@ fn main() {
             println!("Exiting");
             break;
         } else {
-            let response = client.exec_command(command).unwrap();
-            println!("{}", response);
+            let response = match client.exec_command(command) {
+                Err(_) => {
+                    println!("Error: unable to execute the command.");
+                    continue;
+                },
+                Ok(response) => response
+            };
+
+            if !response.is_empty() {
+                println!("{}", response);
+            }
         }
     }
 }
