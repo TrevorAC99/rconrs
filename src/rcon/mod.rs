@@ -1,5 +1,5 @@
 use std::io::prelude::*;
-use std::io::{BufReader, BufWriter};
+use std::io::{BufReader, BufWriter, Error, ErrorKind};
 use std::net::{TcpStream};
 
 const RCON_EXEC_COMMAND: i32 = 2;
@@ -153,11 +153,24 @@ impl RconClient {
         }
     }
 
-    /// Sends a single packet over the internal TcpStream
+    /// Sends a single packet over the internal TcpStream.
     fn send_packet(&mut self, packet: RconPacket) -> std::io::Result<()> {
         let bytes = packet.into_bytes();
 
-        self.writer.write(&bytes)?;
+        // Loop until the write is successful or a fatal error is hit.
+        loop {
+            if let Err(e) = self.writer.write(&bytes) {
+                // Interrupted is non-fatal and can safely be retried.
+                if let ErrorKind::Interrupted = e.kind() {
+                    continue;
+                } else {
+                    return Err(e);
+                }
+            } else {
+                break
+            }
+        }
+
         self.writer.flush()?;
 
         Ok(())
@@ -198,8 +211,8 @@ impl<R: Read> ReadI32FromLeBytes for BufReader<R> {
 /// contains a given message.
 fn new_io_err<T>(message: &'static str) -> std::io::Result<T> {
     Err(
-        std::io::Error::new(
-            std::io::ErrorKind::Other,
+        Error::new(
+            ErrorKind::Other,
             message
         )
     )
