@@ -1,85 +1,34 @@
+#[macro_use]
+extern crate clap;
+
 use std::io::{stdin, stdout, prelude::*};
 use rcon::RconClient;
 
 mod rcon;
 
+const DEFAULT_HOST: &'static str = "localhost";
+const DEFAULT_PORT: u16 = 25575;
+
 fn main() {
-    println!("{}", include_str!("greeting.txt"));
+    let options = get_options();
 
-    let host = read_host();
+    print!("Connecting... ");
 
-    let port = read_port();
-
-    let password = read_password();
-
-    print!("Attempting to connect... ");
-
-    let client = match rcon::RconClient::connect(&host, port, &password) {
+    let client = match RconClient::connect(&options.host, options.port, &options.password) {
         Err(_) => {
-            println!("Unable to authenticate. Did you enter your password correctly? Shutting down.");
+            stdout().flush().unwrap();
+            eprintln!("Unable to connect. Did you enter your password correctly? Shutting down.");
             return;
         },
         Ok(client) => client
     };
 
-    println!("Authentication successful");
+    println!("Connected");
 
     command_loop(client);
 }
 
-/// Asks the user for a host name and reads it into a string.
-fn read_host() -> String {
-    print!("Enter the host you wish to connect to or leave blank for localhost: ");
-    stdout().flush().unwrap();
-
-    let mut host_buffer = String::new();
-    stdin().read_line(&mut host_buffer).unwrap();
-
-    let host = if host_buffer.trim().eq("") {
-        "localhost"
-    } else {
-        host_buffer.trim()
-    };
-
-    String::from(host)
-}
-
-/// Asks the user for a port number and reads it into a u16.
-fn read_port() -> u16 {
-    let mut port_buffer = String::new();
-
-    print!("Enter the port you wish to use or leave blank for 25575: ");
-    stdout().flush().unwrap();
-
-    loop {
-        stdin().read_line(&mut port_buffer).unwrap();
-        let port_trimmed = port_buffer.trim();
-
-        if port_trimmed.is_empty() { break 25575 }
-
-        match port_trimmed.parse::<u16>() {
-            Ok(port) => { break port }
-            Err(_) => {
-                print!("Unable to parse input. Enter the port you wish to use or leave blank for 25575: ");
-                stdout().flush().unwrap();
-                continue
-            }
-        }
-    }
-}
-
-/// Asks the user for a password and reads it into a String.
-fn read_password() -> String {
-    print!("Enter the password: ");
-    stdout().flush().unwrap();
-
-    let mut password_buffer = String::new();
-    stdin().read_line(&mut password_buffer).unwrap();
-
-    String::from(password_buffer.trim())
-}
-
-/// Takes commands from the user and executes them as commands until the user
+/// Takes input from the user and executes it as commands until the user
 /// executes the ```quit``` command.
 fn command_loop(mut client: RconClient) {
     let input = stdin();
@@ -107,5 +56,48 @@ fn command_loop(mut client: RconClient) {
                 println!("{}", response);
             }
         }
+    }
+}
+
+/// The command lines options for the program.
+struct Options {
+    host: String,
+    port: u16,
+    password: String,
+}
+
+/// Collects the arguments from the command line into the ```Options```
+/// struct.
+fn get_options() -> Options {
+    let matches = clap_app!(rconrs =>
+        (version: "0.1.0")
+        (author: "Trevor Carlson <trevorac99@gmail.com>")
+        (about: include_str!("about.txt"))
+        (@arg HOST: -H --host +takes_value "Sets the host to connect to. Leave blank for localhost.")
+        (@arg PORT: -p --port +takes_value "Sets the port to connect to. Leave blank for 25575.")
+        (@arg PASSWORD: -P --password +takes_value +required "The password of the RCON server")
+    ).get_matches();
+
+    let host = matches.value_of("HOST").unwrap_or(DEFAULT_HOST);
+    let host = String::from(host);
+
+    let port = match matches.value_of("PORT") {
+        Some(port) => match port.parse::<u16>() {
+            Ok(port) => { port }
+            Err(_) => {
+                print!("Invalid value for port. Using {} instead.", DEFAULT_PORT);
+                DEFAULT_PORT
+            }
+        }
+        None => DEFAULT_PORT
+    };
+
+    let password = matches.value_of("PASSWORD").unwrap();
+    let password = String::from(password);
+
+    Options {
+        host,
+        port,
+        password,
     }
 }
