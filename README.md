@@ -1,5 +1,15 @@
 # rconrs
-The is a very simple client for the Source RCON (Remote Console) protocol that is described at https://developer.valvesoftware.com/wiki/Source_RCON_Protocol. This program should be ran in a terminal, so spin up your favorite one and run it. It will ask for the host, the port, and the password. Assuming you have entered the credentials correctly, you will be able to type in your commands and execute them by pressing enter. The command ```quit``` will exit the RCON session and close the program.
+The is a very simple client for the Source RCON (Remote Console) protocol that is described at https://developer.valvesoftware.com/wiki/Source_RCON_Protocol. This program should be ran in a terminal, so spin up your favorite one and run it.
+
+## Arguments
+| Short    | Long             | Takes Value? | Action |
+| -------- | ---------------- | ------------ | ------ |
+| ```-h``` | ```--help```     | ✗           | Displays information about the program and how to use it. |
+| ```-H``` | ```--host```     | ✓           | The host to connect to. Leave blank for ```localhost```. |
+| ```-p``` | ```--port```     | ✓           | The port to connect to. Leave blank for ```25575```. |
+| ```-P``` | ```--password``` | ✓           | Required. The password of the RCON server. |
+
+Upon sucessfully connecting, you will be able to type in your commands and execute them by pressing enter. The command ```quit``` will exit the RCON session and close the program.
 
 This project has been created for use with Minecraft servers, but it probably works for other servers the utilize RCON.
 
