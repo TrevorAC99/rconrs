@@ -9,10 +9,12 @@ The is a very simple client for the Source RCON (Remote Console) protocol that i
 | ```-p``` | ```--port```     | ✓           | The port to connect to. Leave blank for ```25575```. |
 | ```-P``` | ```--password``` | ✓           | Required. The password of the RCON server. |
 
+## Use
 Upon sucessfully connecting, you will be able to type in your commands and execute them by pressing enter. The command ```quit``` will exit the RCON session and close the program.
 
 This project has been created for use with Minecraft servers, but it probably works for other servers the utilize RCON.
 
+## Looking forward
 I'll clean up the code and add a license soon (hopefully), but I'm a working college student so I can't guarantee anything. I put this together in a couple hours and I'm no Rust expert, so I make no claims about the quality of the code.
 
 If you are new to Rust and want to understand what my code is doing, go to https://www.rust-lang.org/ to see how to get started.
