@@ -1,9 +1,9 @@
 use std::io::prelude::*;
 use std::io::{BufReader, BufWriter, Error, ErrorKind};
-use std::net::{TcpStream};
+use std::net::TcpStream;
 
-use rcon_packet::RconPacket;
 use super::rcon_packet;
+use rcon_packet::RconPacket;
 
 const RCON_EXEC_COMMAND: i32 = 2;
 const RCON_AUTHENTICATE: i32 = 3;
@@ -27,13 +27,12 @@ impl RconClient {
     /// is successful, it returns an Ok containing an RconClient, otherwise
     /// returning an Err.
     pub fn connect(host: &str, port: u16, password: &str) -> std::io::Result<RconClient> {
-
         let stream = TcpStream::connect((host, port))?;
-    
+
         let reader = BufReader::new(stream.try_clone()?);
         let writer = BufWriter::new(stream);
 
-        let mut client = RconClient {reader, writer};
+        let mut client = RconClient { reader, writer };
 
         client.auth(password)?;
 
@@ -77,9 +76,9 @@ impl RconClient {
                 continue;
             } else if receive_packet.get_id() == RCON_FOLLOW_PID {
                 response = String::from(response);
-                break Ok(response)
+                break Ok(response);
             } else {
-                break new_io_err("Rcon Exec Response Id Invalid")
+                break new_io_err("Rcon Exec Response Id Invalid");
             }
         }
     }
@@ -98,7 +97,7 @@ impl RconClient {
                     return Err(e);
                 }
             } else {
-                break
+                break;
             }
         }
 
@@ -141,10 +140,5 @@ impl<R: Read> ReadI32FromLeBytes for BufReader<R> {
 /// Simple way to create a Err containing a std::io::Error of kind Other that
 /// contains a given message.
 fn new_io_err<T>(message: &'static str) -> std::io::Result<T> {
-    Err(
-        Error::new(
-            ErrorKind::Other,
-            message
-        )
-    )
+    Err(Error::new(ErrorKind::Other, message))
 }

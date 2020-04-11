@@ -23,11 +23,16 @@ impl RconPacket {
         const BASE_PACKET_SIZE: i32 = 8;
         let mut data = Vec::from(data.as_bytes());
         //Add two 0 bytes on the end of the string.
-        data.extend_from_slice(&[0u8;2]);
-        
+        data.extend_from_slice(&[0u8; 2]);
+
         let size = BASE_PACKET_SIZE + (data.len() as i32);
 
-        RconPacket {size, id, cmd, data}
+        RconPacket {
+            size,
+            id,
+            cmd,
+            data,
+        }
     }
 
     /// Turns the packet into raw bytes to be sent over the network.
@@ -66,6 +71,8 @@ impl RconPacket {
 
     /// Gets the data of the packet and creates a String from it.
     pub fn get_data_string(&self) -> String {
-        String::from_utf8_lossy(&self.data).trim().replace("\u{0}", "")
+        String::from_utf8_lossy(&self.data)
+            .trim()
+            .replace("\u{0}", "")
     }
 }

@@ -1,8 +1,8 @@
 #[macro_use]
 extern crate clap;
 
-use std::io::{stdin, stdout, prelude::*};
 use rcon::RconClient;
+use std::io::{prelude::*, stdin, stdout};
 
 mod rcon;
 
@@ -19,8 +19,8 @@ fn main() {
             stdout().flush().unwrap();
             eprintln!("Unable to connect. Did you enter your password correctly? Shutting down.");
             return;
-        },
-        Ok(client) => client
+        }
+        Ok(client) => client,
     };
 
     println!("Connected");
@@ -35,7 +35,7 @@ fn command_loop(mut client: RconClient) {
     loop {
         print!("Enter a command: ");
         stdout().flush().unwrap();
-        
+
         let mut command_buffer = String::new();
         input.read_line(&mut command_buffer).unwrap();
         let command = command_buffer.trim();
@@ -48,8 +48,8 @@ fn command_loop(mut client: RconClient) {
                 Err(_) => {
                     println!("Error: unable to execute the command.");
                     continue;
-                },
-                Ok(response) => response
+                }
+                Ok(response) => response,
             };
 
             if !response.is_empty() {
@@ -83,13 +83,13 @@ fn get_options() -> Options {
 
     let port = match matches.value_of("PORT") {
         Some(port) => match port.parse::<u16>() {
-            Ok(port) => { port }
+            Ok(port) => port,
             Err(_) => {
                 print!("Invalid value for port. Using {} instead.", DEFAULT_PORT);
                 DEFAULT_PORT
             }
-        }
-        None => DEFAULT_PORT
+        },
+        None => DEFAULT_PORT,
     };
 
     let password = matches.value_of("PASSWORD").unwrap();
