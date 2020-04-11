@@ -1,4 +1,0 @@
-Thank you for using rconrs!
-To connect to your server, enter the server information when prompted.
-After authenticating, you will be able to execute commands.
-Enter the command 'quit' to stop the program.
