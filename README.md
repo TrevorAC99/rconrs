@@ -1,5 +1,5 @@
 # rconrs
-The is a very simple client for the Source RCON (Remote Console) protocol that is described at https://developer.valvesoftware.com/wiki/Source_RCON_Protocol. This program should be ran in a terminal, so spin up your favorite one and run it.
+The is a very simple command-line client for the Source RCON (Remote Console) protocol that is described at https://developer.valvesoftware.com/wiki/Source_RCON_Protocol.
 
 ## Arguments
 | Short    | Long             | Takes Value? | Action |
