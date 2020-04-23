@@ -6,7 +6,7 @@ use std::io::{prelude::*, stdin, stdout};
 
 mod rcon;
 
-const DEFAULT_HOST: &'static str = "localhost";
+const DEFAULT_HOST: &str = "localhost";
 const DEFAULT_PORT: u16 = 25575;
 
 fn main() {
