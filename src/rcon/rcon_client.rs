@@ -26,7 +26,7 @@ impl RconClient {
     /// Connects to a host and attempts to authenticate. If the authentication
     /// is successful, it returns an Ok containing an RconClient, otherwise
     /// returning an Err.
-    pub fn connect(host: &str, port: u16, password: &str) -> std::io::Result<RconClient> {
+    pub fn connect(host: &str, port: u16, password: &str) -> std::io::Result<Self> {
         let stream = TcpStream::connect((host, port))?;
 
         let reader = BufReader::new(stream.try_clone()?);

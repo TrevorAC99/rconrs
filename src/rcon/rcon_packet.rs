@@ -19,7 +19,7 @@ pub struct RconPacket {
 
 impl RconPacket {
     /// Creates a new RconPacket based on the given data.
-    pub fn new(id: i32, cmd: i32, data: &str) -> RconPacket {
+    pub fn new(id: i32, cmd: i32, data: &str) -> Self {
         const BASE_PACKET_SIZE: i32 = 8;
         let mut data = Vec::from(data.as_bytes());
         //Add two 0 bytes on the end of the string.
@@ -27,7 +27,7 @@ impl RconPacket {
 
         let size = BASE_PACKET_SIZE + (data.len() as i32);
 
-        RconPacket {
+        Self {
             size,
             id,
             cmd,
