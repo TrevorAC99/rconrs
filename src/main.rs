@@ -1,16 +1,12 @@
-#[macro_use]
-extern crate clap;
+use structopt::StructOpt;
 
 use rcon::RconClient;
 use std::io::{prelude::*, stdin, stdout};
 
 mod rcon;
 
-const DEFAULT_HOST: &str = "localhost";
-const DEFAULT_PORT: u16 = 25575;
-
 fn main() {
-    let options = get_options();
+    let options = Options::from_args();
 
     print!("Connecting... ");
 
@@ -60,44 +56,33 @@ fn command_loop(mut client: RconClient) {
 }
 
 /// The command lines options for the program.
+#[derive(StructOpt)]
+#[structopt(
+    author = "Trevor Carlson <trevorac99@gmail.com>",
+    about = include_str!("about.txt")
+)]
 struct Options {
+    #[structopt(
+        name = "HOST",
+        short = "H",
+        long = "host",
+        default_value = "localhost",
+        help = "The host to connect to."
+    )]
     host: String,
+    #[structopt(
+        name = "PORT",
+        short = "p",
+        long = "port",
+        default_value = "25575",
+        help = "The port of the RCON server."
+    )]
     port: u16,
+    #[structopt(
+        name = "PASSWORD",
+        short = "P",
+        long = "password",
+        help = "The password of the RCON server."
+    )]
     password: String,
-}
-
-/// Collects the arguments from the command line into the ```Options```
-/// struct.
-fn get_options() -> Options {
-    let matches = clap_app!(rconrs =>
-        (version: "0.1.0")
-        (author: "Trevor Carlson <trevorac99@gmail.com>")
-        (about: include_str!("about.txt"))
-        (@arg HOST: -H --host +takes_value "Sets the host to connect to. Leave blank for localhost.")
-        (@arg PORT: -p --port +takes_value "Sets the port to connect to. Leave blank for 25575.")
-        (@arg PASSWORD: -P --password +takes_value +required "The password of the RCON server")
-    ).get_matches();
-
-    let host = matches.value_of("HOST").unwrap_or(DEFAULT_HOST);
-    let host = String::from(host);
-
-    let port = match matches.value_of("PORT") {
-        Some(port) => match port.parse::<u16>() {
-            Ok(port) => port,
-            Err(_) => {
-                print!("Invalid value for port. Using {} instead.", DEFAULT_PORT);
-                DEFAULT_PORT
-            }
-        },
-        None => DEFAULT_PORT,
-    };
-
-    let password = matches.value_of("PASSWORD").unwrap();
-    let password = String::from(password);
-
-    Options {
-        host,
-        port,
-        password,
-    }
 }
