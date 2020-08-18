@@ -25,7 +25,7 @@ fn main() {
 }
 
 /// Takes input from the user and executes it as commands until the user
-/// executes the ```quit``` command.
+/// executes the ```quit``` command or the ```stop``` command.
 fn command_loop(mut client: RconClient) {
     let input = stdin();
     loop {
@@ -47,6 +47,10 @@ fn command_loop(mut client: RconClient) {
                 }
                 Ok(response) => response,
             };
+
+            if command.eq_ignore_ascii_case("stop") {
+                break;
+            }
 
             if !response.is_empty() {
                 println!("{}", response);
