@@ -59,7 +59,7 @@ fn command_loop(mut client: RconClient) {
     }
 }
 
-/// The command lines options for the program.
+/// The command line options for the program.
 #[derive(StructOpt)]
 #[structopt(
     author = "Trevor Carlson <trevorac99@gmail.com>",
