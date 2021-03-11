@@ -6,7 +6,7 @@ use std::io::{prelude::*, stdin, stdout};
 mod rcon;
 
 fn main() {
-    let options = Options::from_args();
+    let options: Options = Options::from_args();
 
     print!("Connecting... ");
 
